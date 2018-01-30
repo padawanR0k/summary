@@ -67,20 +67,20 @@ switch (animal){
   	console.log('TIGER');
   	break;
   case 'lion':
-  	console.log('no');
+  	console.log('LION');
   	break;
   case 'dog':
-  	console.log('noo');
+  	console.log('DOG');
   	break;
   case 'cat':
-  	console.log('nooo');
+  	console.log('CAT');
   	break;
   defualt:
   	console.log('unknown animal');
 }
 ```
 
-마치 `else if`와 `else` 구문을 많이 쓴것가 유사하다.
+마치 `else if`와 `else` 구문을 많이 쓴것과 유사하다.
 
 ---
 
