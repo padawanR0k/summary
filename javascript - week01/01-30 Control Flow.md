@@ -4,6 +4,8 @@
 
 ***
 
+
+
 ## 1. 블록구문
 
 구문들의 집합중의 가장 기본이 되는 구문. 
@@ -16,7 +18,7 @@ function foo() {
   var x = 1, y = 2; 
   console.log(x + y);  
 }// 함수내 블록구문이라서 x , y 지역변수 인정됨
-foo();
+	foo();
 
 // 객체리터럴에 의한 객체 선언
 var obj = {
@@ -33,7 +35,13 @@ while (x < 10) {
 console.log(x);
 ```
 
+
+
+
+
 ---
+
+
 
 ## 2. 조건문
 
@@ -41,7 +49,11 @@ console.log(x);
 
 조건문은 주어진 조건식이 참(`true`)인지 거짓(`false`)인지에 따라 실행되어질 구문들의 집합이다.
 
+
+
 ---
+
+
 
 ### 2- 1. if문
 
@@ -53,7 +65,13 @@ if (조건식){
 }
 ```
 
+
+
+
+
 ---
+
+
 
 ### 2- 2. switch 문
 
@@ -82,7 +100,11 @@ switch (animal){
 
 마치 `else if`와 `else` 구문을 많이 쓴것과 유사하다.
 
+
+
 ---
+
+
 
 ## 3. 반복문 (Loop)
 
@@ -120,6 +142,8 @@ for (var i = 0; i < 2; i++) {
 
 ---
 
+
+
 ### 3- 2. while 문
 
 while 문은 조건문이 참이면 코드 블럭을 계속해서 반복해서 실행하고 거짓이되면 반복문을 빠져나간다.
@@ -143,9 +167,21 @@ while (true) {
 }
 ```
 
+
+
+---
+
+
+
 ### 3- 3. do while문
 
 while 문과 비슷하나 먼저 1회 실행되고 조건문을 확인한다.
+
+
+
+---
+
+
 
 ### 3- 4. continue
 
@@ -155,5 +191,158 @@ for (var i = 0 ; i <10 ; i ++){
   console.log(i);
 }
 // 1,2,3,4 는 출력이 안되고 5,6,7,8,9까지 출력된다.
+```
+
+
+
+***
+
+
+
+## 4. 평가
+
+흐름제어를 위하여 조건식을 평가하여 논리적 참, 거짓을 평가 결과에 따라 의사결정을 하는것이 일반적이다.
+
+조건식은 표현식의 일종이다. 따라서 피연산자와 연산자로 구성된 일반적 표현식뿐만 아니라 문자열이나 숫자와 같은 리터럴 값, 변수, 내장값들(null, undefined, Nan, Infinity…)등 또한 조건식으로 사용될 수 있다.
+
+이때 자바스크립트는 **암묵적 강제 형 변환**을 통해 조건식을 평가한다.
+
+```js
+if(i % 2){ // i % 2는 0 아니면 1 값이온다. 이때 0을 false로 1을 true로 강제 형 변환한다.
+  console.log("odd num")
+}
+
+if (x){ // x가 선언되지 않앗으므로 undefined == false 
+  console.log("false")
+}
+```
+
+
+
+---
+
+
+
+### 4- 1. 암묵적 강제 형 변환
+
+아래의 값이 어떻게 계산될지 생각해보고 직접 크롬 콘솔창에 쳐보자
+
+```js
+console.log('1' > 0);            // 
+console.log(1 + '2');            // 
+console.log(2 - '1');            // 
+console.log('10' == 10);         // 
+console.log('10' === 10);        // 
+console.log(undefined == null);  // 
+console.log(undefined === null); // 
+```
+
+
+
+위 처럼 코딩하는건 가독성이 안좋고 버그를 만들가능성이 높으므로 지양하자.
+
+
+
+---
+
+
+
+### 4- 2. 형 변환 테이블
+
+|  Original Value   | Converted to Number | Converted to String | Converted to Boolean |
+| :---------------: | :-----------------: | :-----------------: | :------------------: |
+|       false       |        **0**        |       ‘false’       |        false         |
+|       true        |        **1**        |       ‘true’        |         true         |
+|         0         |          0          |         ‘0’         |      **false**       |
+|         1         |          1          |         ‘1’         |         true         |
+|        ‘0’        |        **0**        |         ‘0’         |       **true**       |
+|        ‘1’        |        **1**        |         ‘1’         |         true         |
+|        NaN        |         NaN         |        ‘NaN’        |      **false**       |
+|     Infinity      |      Infinity       |     ‘Infinity’      |         true         |
+|     -Infinity     |      -Infinity      |     ‘-Infinity’     |         true         |
+|        ’’         |        **0**        |         ’’          |      **false**       |
+|       ‘10’        |         10          |        ‘10’         |         true         |
+|       ‘ten’       |         NaN         |        ‘ten’        |         true         |
+|        [ ]        |        **0**        |         ’’          |         true         |
+|       [10]        |       **10**        |        ‘10’         |         true         |
+|     [10, 20]      |         NaN         |       ‘10,20’       |         true         |
+|      [‘ten’]      |         NaN         |        ‘ten’        |         true         |
+| [‘ten’, ‘twenty’] |         NaN         |    ‘ten, twenty’    |         true         |
+|   function(){}    |         NaN         |   ‘function(){}’    |         true         |
+|        { }        |         NaN         |  ‘[object Object]’  |         true         |
+|       null        |        **0**        |       ‘null’        |      **false**       |
+|     undefined     |       **NaN**       |     ‘undefined’     |      **false**       |
+
+```js
+var x = false;
+
+// Number() , String() , Boolean() 과 같은 생성자함수앞에 new를 생략하면 인자가 형변환이된다
+// 변수 x의 값을 숫자 타입으로 변환
+console.log('Number : ' + Number(x));  // 0
+// 변수 x의 값을 문자열 타입으로 변환
+console.log('String : ' + String(x));  // 'false'
+// 변수 x의 값을 불리언 타입으로 변환
+console.log('Boolean: ' + Boolean(x)); // false
+
+
+
+// + 단항연산자는 undefined,Nan을 제외한 값을 숫자형으로 변환한다.
+console.log(+10);     // 10
+console.log(+'10');   // 10
+console.log(+true);   // 1
+console.log(+null);   // 0
+console.log(+undefined); // NaN
+console.log(+NaN);    // NaN
+```
+
+
+
+---
+
+
+
+### 4- 3. Data Type conversion
+
+```js
+var val = '123';
+console.log(typeof val + ': ' + val); // string: 123
+
+// sting -> number
+val = +val; 
+// val = parseInt(val);
+// val = Number(val);
+console.log(typeof val + ': ' + val); // number: 123
+
+// number -> sting
+val = val + '';
+// val = val.toString();
+console.log(typeof val + ': ' + val); // string: 123
+```
+
+
+
+---
+
+
+
+### 4- 4. Checking existence
+
+
+
+객체가 undefiend,null이 아니면 true || false 로 취급한다.
+
+```
+// DOM에서 특정 요소를 취득
+var elem = document.getElementById('header');
+
+if (elem) {
+  // 요소가 존재함 : 필요한 작업을 수행
+} else {
+  // 요소가 존재하지 않음 : 에러 처리
+  console.log("there is no element")
+}
+
+// 이 경우는 elem의 값이 true인지 평가하는것이므로 false가 나온다.
+if (elem == true) // false 
 ```
 
