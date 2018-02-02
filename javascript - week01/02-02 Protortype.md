@@ -37,7 +37,7 @@ console.dir(student);
 
 # 3. constructor 프로퍼티
 
-프로토타입 객체는 constructor 프로퍼티를 갖는다. 이 constructor프로퍼티는 객체의 입장에서 자신을 생성한 객체를 가리킨다.
+프로토타입 객체는 constructor 프로퍼티를 갖는다. 이 constructor프로퍼티는 객체의 입장에서 자신을 생성한 객체를 가리킨다. 
 
 
 
@@ -178,8 +178,8 @@ Person.prototype = { gender: 'male' };
 
 var bar = new Person('Kim');
 
-console.log(foo.gender); // undefined
-console.log(bar.gender); // 'male'
+console.log(foo.gender); // undefined 
+console.log(bar.gender); // 'male'   // 객체리터럴로 생성했기 때문에 체이닝이 끊겻다.
 
 console.log(foo.constructor); // ① Person(name)
 console.log(bar.constructor); // ② Object()
