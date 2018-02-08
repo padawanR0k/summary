@@ -261,13 +261,11 @@ var boolObj = new Boolean(123);
 console.log(typeof boolObj + ': ', boolObj);
 ```
 
-
-
 ---
 
 
 
-# 2- 2. Function
+## 2- 2. Function
 
 자바스크립트의 모든 함수는 Function 객체이다. 다른 모든 객체들처럼 Function 객체는 new 연산자을 사용해 생성할 수 있다.
 
@@ -488,7 +486,6 @@ String은 유사배열객체다. 그래서 반복문을 사용해서 순회가�
     console.log(trimmedStr); // 'foo'
     console.log(str); // '  foo  ' 문자열 자신은 변경되지않는다!
     ```
-
 
 
 ---
