@@ -760,4 +760,3 @@ elem.addEventListener('blur', function() {
 - [자바스크립트와 이벤트 루프](https://github.com/nhnent/fe.javascript/wiki/June-13-June-17,-2016)
 - [Philip Roberts: Help, I’m stuck in an event-loop.](https://vimeo.com/96425312)
 
-
