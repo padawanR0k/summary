@@ -158,7 +158,7 @@ new Foo().log();
 
 # 5. static 키워드
 
-**Typescript 클래스에서 static 키워드는 멤버 변수에도 사용할 수 있다.**
+**Typescript 클래스에서 static 키워드는 멤버 변수에도 사용할 수 있다.**	
 
 ```typescript
 class Foo {
