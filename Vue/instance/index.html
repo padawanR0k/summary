@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <style>
+    body > div {
+      border:1px solid #000;
+      margin: 20px;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <p>{{ obj.foo }}</p>
+  <!-- 2. obj.foo는 더이상 변하지 않음  -->
+  <button @click="obj.foo = 'baz'">Change it</button>
+</div>
+<script>
+  var data = { a: 1 }
+  var vm = new Vue({
+    data: data
+  })
+  var obj = {
+    foo: 'bar'
+  }
+
+  Object.freeze(obj); // 1. 객체를 이뮤터블하게 만들어준다.
+  new Vue({
+    el: '#app',
+    data () {
+      return {
+        obj
+      }
+    },
+    data: {
+      a: 1
+    },
+    mounted: function() {
+      alert('a is' + this.a);
+    }
+  })
+  new Vue({
+    data: {
+      a: 1
+    },
+    created: function() {
+      alert('a is' + this.a);
+    }
+  })
+</script>
+</body>
+</html>
