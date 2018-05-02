@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>template</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <style>
+    body>div {
+      border: 1px solid #000;
+      margin: 20px;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <button @click="message = 'bye'">v-once 미사용 {{message}}</button>
+    <!-- v-once디렉티브의 사용으로 업데이트가 안됨 -->
+    <button @click="message = 'bye'" v-once>v-once 사용 {{message}}</button>
+  </div>
+  <div v-bind:id="dynamicId">v-bind를 사용하여 엘리먼트의 id를 동적할당</div>
+  <div id="app2">
+    {{ Date() }}
+  </div>
+  <div id="app3">
+    표현식의 사용
+    <button @click="bool = !bool">boolean 반전</button>
+    {{ bool ? 'true' : 'false' }}
+  </div>
+
+  <div id="app4">
+    <button v-bind:disabled="booleanA">A</button>
+    <button v-bind:disabled="booleanB">B</button>
+  </div>
+  <script>
+    var app1 = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hi',
+        dynamicId: 'dynamic'
+      }
+    })
+
+    var app2 = new Vue({
+      el: '#app2'
+    })
+
+    var app3 = new Vue({
+      el: '#app3',
+      data: {
+        bool: true
+      }
+    })
+    var app4 = new Vue({
+      el: '#app4',
+      data: {
+        booleanA : true,
+        booleanB : false
+      }
+    })
+
+    var app5 = new Vue({
+      el: '#app5',
+      data: {
+        firstName: null,
+        lastName: null
+      },
+      computed: {
+        fullName: {
+          // getter
+          get: function () {
+            return this.firstName + ' ' + this.lastName
+          },
+          // setter
+          set: function (newValue) {
+            var names = newValue.split(' ')
+            this.firstName = names[0]
+            this.lastName = names[names.length - 1]
+          }
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
