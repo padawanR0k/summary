@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>template</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <style>
+    body>div {
+      border: 1px solid #000;
+      margin: 20px;
+      padding: 10px;
+    }
+    body>div>p{
+      padding: 10px;
+      background: #ddd;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app1">
+    <button @click="btn1=!btn1">toggle</button>
+    <template v-if="btn1">
+      <button disabled @click="btn1 = false">
+        버튼 1
+      </button>
+      <input type="radio" name="1" id="">템플릿1 - 1
+      <input type="radio" name="2" id="" key="for1">템플릿1 - 2
+    </template>
+    <template v-else>
+      <button @click="btn1 = true">
+        버튼 2
+      </button>
+      <input type="radio" name="1" id="" >템플릿2 - 1
+      <input type="radio" name="2" id="" key="for2">템플릿2 - 2
+    </template>
+    <p>버튼 엘리먼트의 disabled 어트리뷰트는 공유되지않는다.</p>
+    <p>input:radio 엘리먼트의 checked 프로퍼티는 공유된다.</p>
+  </div>
+  <script>
+    var app1 = new Vue({
+      el: '#app1',
+      data: {
+        btn1: true
+      }
+    })
+  </script>
+</body>
+
+</html>
