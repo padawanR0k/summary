@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>폼입력 바인딩</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <style>
+    body > div {
+      border:1px solid #000;
+      margin: 20px;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+<div id="app1">
+  <input type="checkbox" id="a" value="A" v-model="checkedList" checked>
+  <label for="a">a</label>
+  <input type="checkbox" id="b" value="B" v-model="checkedList">
+  <label for="b">b</label>
+  <input type="checkbox" id="c" value="C" v-model="checkedList">
+  <label for="c">c</label>
+  <p>체크된 리스트: {{checkedList}}</p>
+</div>
+<div id="app2">
+  <select v-model="selected">
+    <option v-for="option in options" v-bind:value="option.value">
+      {{ option.text }}
+    </option>
+  </select>
+  <span>Selected: {{ selected }}</span>
+</div>
+
+<div id="app3">
+  <input type="radio" v-model="pick" v-bind:value="a" id="">Hi
+</div>
+<script>
+  new Vue({
+    el: '#app1',
+    data: {
+      checkedList: ['A']
+    }
+  })
+  var selected = new Vue({
+    el: '#app2',
+    data: {
+      selected: 'C',
+      options: [
+        { text: 'One', value: 'A' },
+        { text: 'Two', value: 'B' },
+        { text: 'Three', value: 'C' }
+      ]
+    }
+  })
+  var app3 = new Vue({
+    el: '#app3',
+    data: {
+      pick: ''
+    }
+  })
+</script>
+</body>
+</html>
