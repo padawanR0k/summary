@@ -33,9 +33,15 @@
   <span>Selected: {{ selected }}</span>
 </div>
 
-<div id="app3">
-  <input type="radio" v-model="pick" v-bind:value="a" id="">Hi
+
+
+<div id="app4">
+  <input type="text" v-model.lazy="text">
+  <p>입력이 전부 끝나야 렌더링된다. {{text}}</p>
+  <input type="text" v-model.trim="trimed">
+  <p>앞 뒤 공백이 사라진다.[{{trimed}}]</p>
 </div>
+
 <script>
   new Vue({
     el: '#app1',
@@ -54,10 +60,13 @@
       ]
     }
   })
-  var app3 = new Vue({
-    el: '#app3',
+
+
+  var app4 = new Vue({
+    el: '#app4',
     data: {
-      pick: ''
+      text: '',
+      trimed: ''
     }
   })
 </script>
