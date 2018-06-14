@@ -84,7 +84,11 @@ Vue.component('sound-icon', {
 	`,
     props:  { // 넘길 props의 타입을 지정해준다. TypeScript에서는 변수뒤에 콜론으로 타입을 붙이듯
         level: {
-            type: Number
+            type: Number,
+		   default: 0, // 기본값을 정해줄 수도 있다.
+            validator (value) { // 값을 검증할 수도 있다.
+			return value >= 0 && value <= 3; 
+            }
         }
     }
 	data() {
@@ -104,5 +108,86 @@ new Vue({
 	<input type="number" v-model.number="soundLevel">
     <sound-icom :level="soundLevel"></sound-icom>
 </div>
+```
+
+
+
+props의 기본값을 Object 또는 Array타입으로 지정하고 싶다면 함수를 사용하여야한다.
+
+```javascript
+default () {
+	return {
+		greeting: 'hello';
+	}
+}
+```
+
+
+
+## 컴포넌트에서 믹스인 사용하기 (상속)
+
+믹스인은 컴포넌트에 높은 유연성을 부여하며 다른 **컴포넌트의 기능을 재사용** 할 수 있는 방법이다.
+
+기본 메커니즘은 이렇다.
+
+1. 컴포넌트의 옵션을 모방한 객체를 정의한다. (아래 코드에서 SuperGreet)
+2. 실제 컴포넌트 내부에 mixins 옵션의 배열에 해당 객체를 위치시킨다.
+
+ 
+
+### 믹스인 순서
+
+뷰에서는 다양한옵션을 혼합하기위해 다양한 전략을 사용한다.
+
+객체를 포함하는 옵션은 하나의 큰 객체로 병합된다. 예를 들어, 한가지 메서드를 포함한 컴포넌트가 있다고 치자. 믹스인옵션으로 그 컴포넌트를 추가한 두번째 컴포넌트(메서드가 2개인)는 최종적으로 총 3가지 메서드를 가지게 된다.  만약 동일한 이름을 가진 메서드가 존재한다면 해당 믹스인의 키는 무시될 것이다.
+
+훅 함수는 병합되진 않지만 믹스인과 컴포넌트의 함수 모두 실행된다. 이때 믹스인의 훅함수가 더 높은 우선순위를 가진다. (?) 
+
+```vue
+<div id="app">
+    <greeter></greeter>
+    <super-greeter></super-greeter>
+  </div>
+
+  <script>
+    var Greeter = {
+      template: `
+        <p>
+          {{message}}
+          <button @click="greet"> greet </button>
+        </p>`,
+      data () {
+        return {
+          message: '...'
+        }
+      },
+      methods: {
+        greet() {
+          this.message = 'hello'
+        }
+      }
+    }
+    var SuperGreeter = {
+      mixins: [Greeter], // 이제 Greeter객체의 message와 greet()를 사용할 수 있게되었다.
+      template: `
+        <p>
+          {{message}}
+          <button @click="superGreet"> Super greet </button>
+          <button @click="greet"> greet </button>
+        </p>
+      `,
+      methods: {
+        superGreet() {
+          this.message = 'Super Hello'
+        }
+      }
+    }
+    new Vue({
+      el: '#app',
+      components: {Greeter, SuperGreeter}
+    })
+
+
+  </script>
 ```
 
