@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+  <title>컴포넌트간 통신</title>
+</head>
+
+<body>
+  <div id="app">
+    <label>sound level</label>
+    <input type="number" v-model.number="soundLevel">
+
+    <!-- html은 대소문자 태그를 구별하지않기 때문에 케밥케이스를 사용해야 한다. -->
+    <sound-icon :level="soundLevel"></sound-icon>
+  </div>
+  <script>
+    Vue.component('sound-icon', {
+      template: "<span>{{soundEmoji[level]}}</span>",
+      props: {
+        level: Number, // 컴포넌트가 내부상태로서 갖게될 속성
+        level2: {
+          type: MyObject // angular에서 인터페이스를 만들어 놓듯이 생성자를 전달해 props를 검사할 수 있다.
+        },
+        level3: {
+          required: true,
+          defualt: 0, // prop의 기본값을 정해주는 것도 가능하다.
+          validator(value) { // 이런식으로 밸리데이터를 생성하여 값을 검증할 수 있다.
+            return value >= 0 && value <= 3
+          }
+        }
+      },
+      data() { // 객체를 할당하지 않고 함수를 할당한 이유는 ?
+      // 여러 인스턴스가 생길 수 있기 때문에 여러 인스턴스가 하나의 객체를 공유하지않고
+      // 인스턴스가 서로 다른 객체를 가진다.
+        return {
+          soundEmoji: ['🔈', '🔉','🔊']
+        }
+      },
+      // 만약 props를 array 혹은 object 타입으로 지정하고 싶으면 함수를 사용해야한다.
+      default() {
+        return {
+          greetings: 'hello'
+        }
+      }
+    })
+    new Vue({
+      el: '#app',
+      data: {
+        soundLevel: 0
+      }
+    })
+  </script>
+</body>
+
+</html>

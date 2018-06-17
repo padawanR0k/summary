@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+    #app {
+      background: #fff;
+      border-radius: 4px;
+      padding: 20px;
+      transition: all 0.2s;
+    }
+    .super{
+      filter: hue-rotate(120deg)
+    }
+  </style>
+  <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+  <title>컴포넌트에서 믹스인 사용하기</title>
+</head>
+
+<body>
+  <div id="app">
+    <greeter></greeter>
+    <super-greeter></super-greeter>
+  </div>
+
+  <script>
+    var Greeter = {
+      template: `
+        <p>
+          {{message}}
+          <button @click="greet"> greet </button>
+        </p>`,
+      data () {
+        return {
+          message: '...'
+        }
+      },
+      methods: {
+        greet() {
+          this.message = 'hello'
+        }
+      }
+    }
+    var SuperGreeter = {
+      mixins: [Greeter],
+      template: `
+        <p>
+          {{message}}
+          <button @click="superGreet"> Super greet </button>
+          <button @click="greet"> greet </button>
+        </p>
+      `,
+      methods: {
+        superGreet() {
+          this.message = 'Super Hello'
+        }
+      }
+    }
+    new Vue({
+      el: '#app',
+      components: {Greeter, SuperGreeter}
+    })
+
+
+  </script>
+</body>
+
+</html>

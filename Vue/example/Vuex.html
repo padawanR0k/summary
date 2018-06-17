@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+    .blabber {
+  width: 200px;
+  height: 40px;
+  background-color: gainsboro;
+  border: 1px solid grey;
+    }
+
+    #app {
+      background: #fff;
+      border-radius: 4px;
+      padding: 20px;
+      transition: all 0.2s;
+    }
+
+    li {
+      margin: 8px 0;
+    }
+
+    h2 {
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    del {
+      color: rgba(0, 0, 0, 0.3);
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vuex/3.0.1/vuex.min.js"></script>
+  <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+  <title>컴포넌트간 Vuex 간 통신하기</title>
+</head>
+
+<body>
+  <div id="app">
+    <blabber></blabber>
+    <blabber></blabber>
+    <blabber></blabber>
+  </div>
+
+  <script>
+
+    const store = new Vuex.Store({
+      strict: true,
+      state: {
+        currentActor: -1,
+        currentLine: -1,
+        actors: [],
+        dialogue: [
+          'where r u going?',
+          'To the Cinema',
+          "What's on the cinema?",
+          'Quo vadis?',
+          'Oh, what does it mean?'
+        ]
+      },
+      mutations: {
+        entersScene(state, uuid) {
+          state.currentLine = (state.currentLine + 1) % state.dialogue.length;
+          state.actors.push({
+            uuid,
+            line: state.dialogue[state.currentLine]
+          })
+          state.currentActor = (state.currentLine + 1) % state.actors.length;
+        },
+        nextLine(state) {
+          state.currentActor = (state.currentActor + 1) % state.actors.length;
+          state.currentLine = (state.currentLine + 1) % state.dialogue.length;
+          state.actors[state.currentActor].line = state.dialogue[state.currentLine];
+        }
+      }
+    })
+
+    Vue.component('blabber', {
+      template: '<div class="blabber">{{currentLine}}</div>',
+      data() {
+        return {
+          uuid: Math.random()
+        }
+      },
+      computed: {
+        currentLine() {
+          return store.state.actors.find(actor => actor.uuid === this.uuid).line
+        }
+      },
+      created() {
+        store.commit('entersScene', this.uuid)
+      }
+    })
+    new Vue({
+      el: "#app",
+      mounted() {
+        setInterval(() => {
+          store.commit('nextLine')
+        }, 2000)
+      }
+    })
+  </script>
+</body>
+
+</html>

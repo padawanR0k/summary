@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+  <title>컴포넌트 생성 및 등록하기</title>
+</head>
+
+<body>
+  <div id="app">
+    <light-bulb></light-bulb>
+    <light-bulb></light-bulb>
+    <light-bulb></light-bulb>
+  </div>
+  <script>
+    // Vue.component('light-bulb', {
+    //   template: `
+    //     <div class="light-bulb">
+    //       <p> 💡Eureka </p>
+    //     </div>
+    //   `
+    // })
+    // new Vue({
+    //   el: '#app'
+    // })
+
+
+    //==== 지역적 등록 local resistration
+    // var lightBulb = {
+    //   template: `
+    //     <div class="light-bulb">
+    //       <p> 💡Eureka </p>
+    //     </div>
+    //   `
+    // }
+    // new Vue({
+    //   el: '#app',
+    //   components: {
+    //     'light-bulb': lightBulb
+    //   }
+
+    // })
+
+    Vue.component('light-bulb', {
+      functional: true, render (h) {
+        return h(
+          'div',
+          { class: 'light-bulb'},
+          [
+            h('p', 'Eureka')
+          ]
+        )
+      }
+    })
+    new Vue({
+      el: '#app'
+    })
+  </script>
+</body>
+
+</html>

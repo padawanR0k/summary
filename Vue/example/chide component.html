@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+    .blabber {
+  width: 200px;
+  height: 40px;
+  background-color: gainsboro;
+  border: 1px solid grey;
+    }
+
+    #app {
+      background: #fff;
+      border-radius: 4px;
+      padding: 20px;
+      transition: all 0.2s;
+    }
+
+    li {
+      margin: 8px 0;
+    }
+
+    h2 {
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    del {
+      color: rgba(0, 0, 0, 0.3);
+    }
+  </style>
+  <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+  <title>자식 컴포넌트 상태 읽기</title>
+</head>
+
+<body>
+  <div id="app">
+    <child v-for="i in 10" ref="junior" :num="i" :key="i"></child>
+    <p>어린이 4: {{child4Stomach}}</p>
+  </div>
+
+  <script>
+    Vue.component('child', {
+      template: "<p>어린이 {{num}}: {{mouth}}</p>",
+      props: ['num'],
+      data() {
+        return {
+          mouth: "그 쿠키 제가 안먹었어요!",
+          stomach: `사실 ${this.num}개나 먹음`
+        }
+      }
+    })
+    new Vue({
+      el: "#app",
+      data: {
+        child4Stomach: 'unknown'
+      },
+      mounted() {
+        this.child4Stomach = this.$refs.junior[3].stomach
+      }
+    })
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+  </style>
+  <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+  <title>비동기적으로 컴포넌트 로딩하기</title>
+</head>
+
+<body>
+  <div id="app">
+    <span v-if="loading">loading...</span>
+    <period-base></period-base>
+  </div>
+
+  <script>
+
+    Vue.component('periodBase',(resolve, reject) => {
+      setTimeout(() => {
+        if ((new Date()).getDate() !== 6) {
+          resolve({
+            template: `<div>
+              장미는 4만원입니다.
+            </div>`,
+            mounted () {
+              this.$parent.$emit('loaded')
+            }
+          })
+        } else {
+          reject("오늘은 일요일이라 문을 안엽니다.")
+        }
+      }, 1000);
+    })
+    new Vue({
+      el: '#app',
+      data: {
+        loading: true
+      },
+      created() {
+        this.$on('loaded', () => {
+          this.loading = false
+        })
+      }
+    })
+  </script>
+</body>
+
+</html>
