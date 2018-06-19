@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+  </style>
+  <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+  <title>재사용 가능한 체크리스트</title>
+</head>
+
+<body>
+  <div id="app">
+    <dialog-box command="confirmation" :cancellable="true" @ok="msg = 'confirmed'">
+      <span slot="icon">주의!</span>
+      <span slot="message">확실합니까?</span>
+    </dialog-box>
+    <p>
+      Output: {{msg}}
+    </p>
+  </div>
+
+  <script>
+    Vue.component('dialog-box', {
+      template: `
+      <div>
+        <div class="icon">
+          <slot name="icon"></slot>
+        </div>
+        <slot name="message"></slot>
+        <div class="buttons">
+          <button v-if="cancellable" @click="cancel()">
+            Cancel
+          </button>
+          <button @click="ok()">
+            OK
+          </button>
+        </div>
+      </div>
+      `,
+      props: {
+        command: String,
+        cancellable: Boolean
+      },
+      methods: {
+        cancel() {
+          this.$emit('cancel', this.command)
+        },
+        ok() {
+          this.$emit('ok', this.command)
+        }
+      }
+    })
+    new Vue({
+      el: '#app',
+      data: {
+        msg: 'undefined'
+      }
+    })
+  </script>
+</body>
+
+</html>
