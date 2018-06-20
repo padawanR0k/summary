@@ -191,3 +191,62 @@ default () {
   </script>
 ```
 
+
+
+## 비동기적으로 컴포넌트 로딩하기
+
+앱이 이미실행 중일 때 컴포넌트를 로딩해야하는 경우가 있다. 일부 컴포넌트의 모양이 미리 알려지지 않은 경우에는 컴포넌트를 생성할 수 없다. 실제로 렌더링 해야하는 경우에만 컴포넌트를 로드할 수 있다. 만약 다음에도 컴포넌트를 렌더링해야할 경우가 있다면 캐시에서 반환된다.
+
+```Vue
+<div id="app">
+    <span v-if="loading">loading...</span>
+    <period-base></period-base>
+</div>
+
+<script>
+
+    Vue.component('periodBase',(resolve, reject) => {
+        setTimeout(() => {
+            if ((new Date()).getDate() !== 6) {
+                resolve({
+                    template: `<div>
+장미는 4만원입니다.
+    </div>`,
+                    mounted () { 
+                        // (1)
+                        this.$parent.$emit('loaded')
+                    }
+                })
+            } else {
+                reject("오늘은 일요일이라 문을 안엽니다.")
+            }
+        }, 1000);
+    })
+    new Vue({
+        el: '#app',
+        data: {
+            loading: true
+        },
+        created() {
+            (2)
+            this.$on('loaded', () => {
+                this.loading = false
+            })
+        }
+    })
+</script>
+```
+
+SetTimeout메서드는 Ajax호출을 시뮬레이션하기 위해 사용했다. 이 컴포넌트를 일요일에 실행하면 문이 닫혔다는 메세지가 뜰것이다.
+
+
+
+### 비동기 컴포넌트
+
+> Vue.component('comp-nam', (resolve, reject) => { ... })
+
+일반 컴포넌트는 두 번째인자로 객체를 넘기지만 비동기 컴포넌트는 인자 2개를 받는 함수를 넘긴다.
+
+이 때 첫번째 인자 resolve는 컴포넌트의 속성을 갖고 있는 객체가 사용가능할 때 호출된다. 두번째 인자 reject는 문자열을 인자로 받는 함수이다. 만약 비동기로 동작하는 부분이 에러가 난다면 컴포넌트가 해당 문자열로 대체된다. (이 때, 에러 메세지를 남기자)
+
+(1)비동기 컴포넌트가 마운트되고 나서 그 정보를 부모 컴포넌트에게 보내서 (2)부모컴포넌트에게 특정 일을 시킬 수도 있다.
