@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+  </style>
+  <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.js"></script>
+  <title>rest 클라이언트 와 서버 생성하기</title>
+</head>
+
+<body>
+  <div id="app">
+    <h3>이모티콘 메세지</h3>
+    <ol>
+      <li v-for="message in messages">
+        <button @click="deleteItem(message._id)">Delete</button>
+        <button @click="edit(message._id, message.text)">edit</button>
+        <input type="text" v-model="message.text">
+      </li>
+    </ol>
+    <input type="text" v-model="toAdd">
+    <button @click.prevent="add">add</button>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        messages: [],
+        toAdd: ''
+      },
+      created() {
+        axios.get('http://localhost:3030/message/')
+          .then(response => {
+            console.log(response)
+            this.messages = response.data.data
+          })
+      },
+      methods: {
+        add() {
+          axios.post('http://localhost:3030/message/', {
+            text: this.toAdd
+          })
+            .then(response => {
+              if(response.status === 201) {
+                this.messages.push(response.data)
+                this.toAdd = ''
+              }
+            })
+        },
+        deleteItem(id) {
+          axios.delete('http://localhost:3030/message/' + id)
+            .then(response => {
+              if (response.status < 400) {
+                this.messages.splice(this.messages.findIndex(e => e.id === id), 1)
+              }
+            })
+        },
+        edit(id, text) {
+          axios.put('http://localhost:3030/message/' + id, {text})
+            .then(response => {
+              if (response.status < 400) {
+                console.info(response.status)
+              }
+            })
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>

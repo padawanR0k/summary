@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+    p {
+      font-family: 'nanumgothic';
+      font-size: 2rem;
+    }
+  </style>
+  <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.js"></script>
+  <title>무한 스크롤링</title>
+</head>
+
+<body>
+  <div id="app">
+    <p v-for="word in words">
+      {{word}}
+    </p>
+    <span v-if="loading">데이터 받아오는중..</span>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      methods: {
+        bottomVisible() {
+          const visibleHeight = document.documentElement.clientHeight; // 지금 보여지는 브라우저창의 높이 값
+          const pageHeight = document.documentElement.scrollHeight; // 페이지 전체의 Y길이 값
+          const scrolled = window.scrollY; // 지금 스크롤한 Y값
+          const reachedBottom = visibleHeight + scrolled >= pageHeight;
+          return reachedBottom || pageHeight < visibleHeight
+        },
+        addWord() {
+          this.loading = true;
+          axios.get('http://api.adviceslip.com/advice')
+            .then(response => {
+              this.words.push(response.data.slip.advice);
+              if (this.bottomVisible()) {
+                this.addWord();
+                this.loading = false;
+              }
+            })
+        }
+      },
+      created() {
+        window.addEventListener('scroll', () => {
+          this.bottom = this.bottomVisible();
+        })
+        this.addWord()
+      },
+      data: {
+        bottom: false,
+        words: [],
+        loading: false
+      },
+      watch: {
+        bottom (bottom) {
+          if (bottom) {
+            this.addWord();
+          }
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+  </style>
+  <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.js"></script>
+  <title>엑시오스를 사용한 기초적인 AJAX 요청</title>
+</head>
+
+<body>
+  <div id="app">
+    <h2>오늘의 명언</h2>
+    <p>
+      {{advice}}
+    </p>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        advice: 'loading..'
+      },
+      created() {
+        axios.get('http://api.adviceslip.com/advice')
+          .then(response => {
+            this.advice = response.data.slip.advice
+          })
+          .catch(error => {
+            this.advice = error + '오류가 있습니다.';
+          })
+      }
+    })
+  </script>
+</body>
+
+</html>

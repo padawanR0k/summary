@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+    @keyframes spin {
+      100% {transform: rotate(360deg)}
+    }
+    .spinner {
+      width: 1em;
+      height: 1em;
+      padding-bottom: 12px;
+      display: inline-block;
+      animation: spin 2s linear infinite;
+    }
+  </style>
+  <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.js"></script>
+  <title>요청중에 발생한 에러에서 복구하기</title>
+</head>
+
+<body>
+  <div id="app">
+    <h3>에베레스트 피자</h3>
+    <button @click="order" :disabled="inProgress">피자 주문하기</button>
+    <span class="spinner" v-show="inProgress">🍕 </span>
+    <h4>찜 목록</h4>
+    <p>{{requests}}</p>
+    <h4>주문 목록</h4>
+    <span v-for="pizza in responses">
+      {{pizza.id}} : {{pizza.req}}
+    </span>
+  </div>
+
+  <script>
+    // 크롬 개발자도구 창 - network - 커스텀 쓰로틀링 1, 1, 1000 추가 후 실행할 것
+    new Vue({
+      el: '#app',
+      data: {
+        inProgress: false,
+        requests: new Object(null),
+        responses: new Object(null),
+        counter: 0,
+        impatientAxios: undefined
+      },
+      created() {
+        this.impatientAxios = axios.create({
+          timeout : 3000
+        })
+      },
+      methods: {
+        order (event, oldRequest) {
+          let request = undefined;
+          if (oldRequest) {
+            request = oldRequest
+          } else {
+            request = { req : '🍕', id: this.counter++}
+          }
+          this.inProgress = true;
+          this.requests[request.id] = request;
+          this.impatientAxios.get('http://httpstat.us/200')
+            .then(response => {
+              this.inProgress = false;
+              this.responses[request.id] = this.requests[request.id]
+              delete this.requests[request.id]
+            })
+            .catch(e => {
+              this.inProgress = false;
+              console.error(e.message);
+              console.error(this.requests.s);
+              setTimeout(this.order(event, request) , 1000)
+            })
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
