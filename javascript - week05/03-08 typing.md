@@ -36,21 +36,21 @@ const multiply2 = (x: number, y: number): number => x * y;
 
 TypeScript는 ES5, ES6의 Superset(상위확장)이므로 JavaScript의 타입을 그대로 사용할 수 있다. JavaScript의 타입 이외에도 TypeScript 고유의 타입이 추가로 제공된다.
 
-|   Type    |  JS  |  TS  | Description                                                  |
-| :-------: | :--: | :--: | ------------------------------------------------------------ |
-|  boolean  |  ◯   |      | true와 false                                                 |
-|   null    |  ◯   |      | primitives 또는 object형 변수에 값이 없다는 것을 명시        |
-| undefined |  ◯   |      | 값을 할당하지 않은 변수의 초기값                             |
-|  number   |  ◯   |      | 숫자(정수와 실수, Infinity, NaN)                             |
-|  string   |  ◯   |      | 문자열                                                       |
-|  symbol   |  ◯   |      | 고유하고 수정 불가능한 데이터 타입이며 주로 객체 프로퍼티들의 식별자로 사용(ES6에서 추가) |
-|  object   |  ◯   |      | 객체형, 참조형                                               |
-|   array   |      |  ◯   | 배열                                                         |
-|   tuple   |      |  ◯   | 고정된 요소수 만큼의 자료형을 미리 선언후 배열을 표현        |
-|   enum    |      |  ◯   | 열거형. 숫자값 집합에 이름을 지정한 것이다.                  |
-|    any    |      |  ◯   | 타입 추론(type inference)할 수 없거나 타입 체크가 필요없는 변수는 any 타입으로 선언한다. |
-|   void    |      |  ◯   | 일반적으로 함수에서 반환값이 없을 경우 사용한다.             |
-|   never   |      |  ◯   | 결코 발생하지 않는 값                                        |
+|   Type    |  JS  |   TS    | Description                                                  |
+| :-------: | :--: | :-----: | ------------------------------------------------------------ |
+|  boolean  |  ◯   |    ◯    | true와 false                                                 |
+|   null    |  ◯   |    ◯    | primitives 또는 object형 변수에 값이 없다는 것을 명시        |
+| undefined |  ◯   |    ◯    | 값을 할당하지 않은 변수의 초기값                             |
+|  number   |  ◯   |    ◯    | 숫자(정수와 실수, Infinity, NaN)                             |
+|  string   |  ◯   |    ◯    | 문자열                                                       |
+|  symbol   |  ◯   |    ◯    | 고유하고 수정 불가능한 데이터 타입이며 주로 객체 프로퍼티들의 식별자로 사용(ES6에서 추가) |
+|  object   |  ◯   | ◯ㅋㅋㅋ | 객체형, 참조형                                               |
+|   array   |      |    ◯    | 배열                                                         |
+|   tuple   |      |    ◯    | 고정된 요소수 만큼의 자료형을 미리 선언후 배열을 표현        |
+|   enum    |      |    ◯    | 열거형. 숫자값 집합에 이름을 지정한 것이다.                  |
+|    any    |      |    ◯    | 타입 추론(type inference)할 수 없거나 타입 체크가 필요없는 변수는 any 타입으로 선언한다. |
+|   void    |      |    ◯    | 일반적으로 함수에서 반환값이 없을 경우 사용한다.             |
+|   never   |      |    ◯    | 결코 발생하지 않는 값                                        |
 
 ```typescript
 let isDone: boolean = false; // 실무에서는 선언과 동시에 할당할땐 굳이 타입을 써 줄필요가 없다.

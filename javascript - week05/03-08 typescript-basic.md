@@ -44,7 +44,7 @@ sum('x', 'y'); // error TS2345: Argument of type '"x"' is not assignable to para
 
 ## 2.2 도구의 지원
 
-DE(통합개발환경)
+IDE(통합개발환경)
 
  타입 정보를 제공함으로써 **높은 수준의 IntelliSense, 코드 어시스트, 타입 체크, 리팩토링** 등을 지원받을 수 있다.
 
@@ -54,7 +54,7 @@ DE(통합개발환경)
 
 ## 2.3 강력한 OOP 지원
 
-크고 복잡한 프로젝트의 코드 기반을 쉽게 구성할 수 있도록 혀 javascript 의 장점을 합침
+크고 복잡한 프로젝트의 코드 기반을 쉽게 구성할 수 있도록하여 javascript 의 장점을 합침
 
 여러명의 개발자가 협업을할때 OOP는 중요하다.
 
@@ -66,15 +66,15 @@ ES5와 비교할 때 개발환경 구축의 관점에서 다소 복잡해진 측
 
 ## 2.5 Angular
 
-구글은 정식언어로 typesciprt를 결정했다.
+구글은 angular의 정식언어로 typesciprt를 결정했다.
 
 
 
 # 3. 개발환경 구축
 
-SASS파일이 CSS 컴파일되듯 이것도마찬가지이다.
+SASS파일이 CSS로 컴파일되어 사용되듯 이것도마찬가지이다.
 
-## 3.1 Node.js 설치
+## 3.1 설치
 
 ``` bash
 $ npm install -g typescript

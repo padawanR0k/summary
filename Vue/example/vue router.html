@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style>
+    a.router-link-active, li.router-link-active > a {
+      background-color: gainsboro;
+    }
+  </style>
+  <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-router@3.0.1/dist/vue-router.js"></script>
+
+  <title>Vue 라우터 사용하기</title>
+</head>
+
+<body>
+  <div id="app">
+    <h1>레스토랑 메뉴</h1>
+    <ul>
+      <li><router-link to="/" exact>Home</router-link></li>
+      <li><router-link to="/menu">Menu</router-link></li>
+      <li>
+        <router-link tag="li" to="/bar" :event="['mousedown', 'touchstart']"><a>Bar</a></router-link>
+      </li>
+    </ul>
+    <!-- 진입점 -->
+    <router-view></router-view>
+  </div>
+
+  <script>
+    Vue.use(VueRouter);
+    const Home = { template: '<div>Welcome!</div>'}
+    const Menu = { template: '<div>오늘의 메뉴는 쿠키입니다</div>'}
+    const Bar = { template: '<div>우리는 칵테일을 제공하고 있습니다.</div>'}
+
+    const router = new VueRouter({
+      routes: [
+        {path: '/', component: Home},
+        {path: '/menu', component: Menu},
+        {path: '/bar', component: Bar}
+      ]
+    });
+    new Vue({
+      router,
+      el: '#app'
+    })
+  </script>
+</body>
+
+</html>
