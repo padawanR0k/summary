@@ -1,4 +1,4 @@
-## 기본적인 SQL 문법들
+## 데이터의 형식
 ---
 
 <br />
@@ -165,3 +165,73 @@ SHOW TABLE STATUS; -- 현재 서버의 스키마 목록의 상태를 조회한�
 
 DESC TableName; -- 현재 테이블의 열에 대한 정보를 조회한다. (컬럼명, 타입, 조건, 기본값 등)
 ```
+
+<br />
+
+### 데이터 변경을 위한 INSERT문
+```sql
+# 순서에 따라 value각 들어갈 컬럼이 지정된다.
+INSERT INTO tableName(colName1, colName2) VALUES (value1, value2)
+```
+
+#### 테이블의 속성
+- Auto Increment
+	- 컬럼 생성시, 해당 옵션을 지정하면 ROW가 생성될 때 1씩 증가하는 값을 자동으로 입력해준다.
+	- 해당 옵션을 지정하기 위해서는 PK 또는 UNIQUE설정이 필수적이다.
+	```sql
+	CRATE TABLE testTable1
+		(id int AUTO_INCREMENT PRIMARY KEY,
+		userName char(3),
+		age int)
+
+	# 특정시점부터의 AUTO_INCREMENT의 시작숫자를 변경 할 수도 있다.
+	ALTER TABLE tableName AUTO_INCREMENT=100;
+
+	# 증가값이 1아닌 다른값을 변경하기 위해서는 서버변수를 변경하면된다
+	@@auto_increment_increment=3;
+	```
+
+
+### 데이터 변경을 위한 UPDATE문
+```sql
+# UPDATE INTO ~ VALUES 는 표준문법이다
+UPDATE INTO tableName(colName1, colName2) VALUES (value1, value2)
+
+# 아래  문법은 mysql에서 지원하는 문법이다.
+UPDATE INTO table SET a=1, b=2, c=3
+```
+
+### 데이터 삭제를 위한 DELETE문
+```sql
+DELETE FROM tableName WHERE COL1 = "a";
+```
+- 조건에 해당하는 ROW를 모두 삭제한다.
+- 데이터 삭제를 위한 명령어는 DELETE(DML), DROP(DDL), TRUNCATE(DDL)이 있다. DML인 DELETE은 트랜잭션 로그를 남기기때문에 많은 양의 데이터를 삭제할 때 오래걸린다. DROP의 경우는 데이터와 테이블모두 로그없이 삭제하기떄문에 빠르다. TRUNCATE는 테이블구조만 남기고 로그없이 모두 삭제한다. DROP과 동일하게 빠르다
+
+### 조건부 데이터 입력, 변경
+- `INSERT INTO IGNORE`
+	- IGNORE 키워드는 PK중복으로 인해 오류가 발생한 쿼리를 무시하고 다음 쿼리를 진행하게 해준다. 만약 아래 코드가 실행되면 a와 b 두 row만 입력될 것이다.
+	- ```sql
+		INSERT IGNORE INTO tableNAme1 VALUES('a', '1');
+		INSERT IGNORE INTO tableNAme1 VALUES('a', '1');
+		INSERT IGNORE INTO tableNAme1 VALUES('a', '1');
+		INSERT IGNORE INTO tableNAme1 VALUES('b', '1');
+		```
+- `INSERT INTO ON DUPLICATE KEY UPDATE`
+	- ON DUPLICATE KEY UPDATE는 PK가 중복되는 경우, INSERT문 대신 뒤에 작성된 UPDATE문을 실행한다.
+	- ```sql
+		INSERT INTO tableName1 VALUES('a', '1')
+			ON DUPLICATE KEY UPDATE COL1='a' , COL2 = '2';
+		```
+
+<br />
+
+### WITH절, CTE
+
+WITH절은 mysql 8.0 버전 이후 부터 사용할 수 있으며 WITH절은 CTE(Common Table Expression)을 표현하기위해 사용한다. 주로 복잡한 쿼리에서 가독성과 재사용성을 위해 사용한다.
+- VIEW와의 차이점은? WITH의 파생테이블은 구문이 끝나면 같이 소멸된다.
+- [MySQL 8.0 NF : Common Table Expressions (CTE)](https://www.slideshare.net/LeeIGoo/mysql-80-nf-common-table-expressions-cte)
+	- CTE로 무얼할수 있는지, 재귀적인 호출 등
+- [SQL로 CTE를 표현하는 WITH 활용하기](https://yahwang.github.io/posts/49)
+	- 실습, CTE사용시 주의점; 무분별한 사용은 오히려 성능악화를 초래한다.
+- [[이렇게 사용하세요!] MySQL 8.0, 개발자를 위한 신규 기능 살펴보기! #2 SQL DML](https://medium.com/naver-cloud-platform/%EC%9D%B4%EB%A0%87%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%98%EC%84%B8%EC%9A%94-mysql-8-0-%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%A5%BC-%EC%9C%84%ED%95%9C-%EC%8B%A0%EA%B7%9C-%EA%B8%B0%EB%8A%A5-%EC%82%B4%ED%8E%B4%EB%B3%B4%EA%B8%B0-2-sql-dml-1f3f7159a45f)
