@@ -63,9 +63,9 @@ module.exports = {
 
 	// 데브 서버 실행시, 옵션지정 참고 - https://webpack.js.org/configuration/dev-server/
 	devServer: {
-    historyApiFallback: true,
-    noInfo: true,
-    overlay: true
+		historyApiFallback: true,
+		noInfo: true,
+		overlay: true
 	},
 
 	// 빌드결과물 크기에 대한 경고를 띄울수있는 옵션 - https://webpack.js.org/configuration/performance/
