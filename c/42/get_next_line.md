@@ -60,7 +60,7 @@ size_t write(int fd, const void *buf, size_t nbytes);
 
 ### 컴퓨터에서 메모리가 사용되는 구조
 
-![get%20next%20line%204ee864afb50e411a85b27ef94195a258/Untitled.png](get%20next%20line%204ee864afb50e411a85b27ef94195a258/Untitled.png)
+![./get_next_line/Untitled.png](get_next_line/memory.png)
 
 따배씨 - 11.2 메모리 레이아웃과 문자열
 
