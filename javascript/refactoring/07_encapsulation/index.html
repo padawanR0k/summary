@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body>
+	<script>
+		const organization = {
+			name: '애크미 구스베리',
+			country: "GB"
+		};
+
+		// 기본
+		const result1 = `<h1>${organization.name}</h1>`
+
+		// 캡슐화 진행중
+		function getRawDataOfOrganization() {
+			return organization
+		}
+		const result2 = `<h1>${getRawDataOfOrganization().name}</h1>`
+
+		console.log({
+			result1,
+			result2
+		});
+	</script>
+	<script>
+		const organization = {
+			name: '애크미 구스베리',
+			country: "GB"
+		};
+
+
+		class Organization {
+			constructor(data) {
+				this._name = data.name;
+				this._country = data.country;
+			}
+
+			get name() {
+				return this._name;
+			}
+			get country() {
+				return this._country;
+			}
+			set name(str) {
+				this._name = str;
+			}
+			set country(str) {
+				this._country = str;
+			}
+		}
+		const organ1 = new Organization(...organization);
+		const result2 = `<h1>${organ1.name}</h1>`
+	</script>
+
+	<script>
+		const custormerData = {
+			1920: {
+				name: "마틴 파울러",
+				id: 1920,
+				usages: {
+					2016: {
+						1: 50,
+						2: 55,
+					},
+					2016: {
+						1: 70,
+						2: 63,
+					}
+				}
+			}
+		}
+		// 읽기 예
+		function compareUsage(custormerId, laterYear, month) {
+			const later = custormerData[custormerId].usages[laterYear][month];
+			const ealier = custormerData[custormerId].usages[laterYear - 1][month];
+			return {
+				laterAmount: later,
+				change: ealier - later
+			}
+		}
+		compareUsage(1920, 2016, 2)
+	</script>
+
+	<script>
+		const customers = [{
+				id: 0,
+				priority: 'super'
+			},
+			{
+				id: 1,
+				priority: 'high'
+			},
+			{
+				id: 2,
+				priority: 'middle'
+			},
+			{
+				id: 3,
+				priority: 'row'
+			}
+		];
+		// vip의 조건이 다양해지게되면 이 부분이 복잡해진다.
+		const vip = customers.filer(a => a.priority === 'high' || a.priority === 'super')
+
+
+		const priorities = ['super', 'high', 'middle', 'row'];
+		class Priority {
+			constructor(value) {
+				this.value = value;
+			}
+
+			get index() {
+				priorities.findIndex(item => item === this.value)
+			}
+
+			higherThan(priority) {
+				return this.index >= priority.index
+			}
+		}
+
+		const vipPriority = new Priority('high');
+		customers.filer(a => new Priority(a.priority).higherThan(vipPriority))
+	</script>
+</body>
+
+</html>
