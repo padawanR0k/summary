@@ -3,7 +3,7 @@
 const map = (f, iter) => {
 	const arr = [];
 	for (let a of iter) {
-		arr.push(a)
+		arr.push(f(a))
 	}
 	return arr;
 }
@@ -62,7 +62,10 @@ go(
 	a => a + 3,
 	console.log
 )
-const pipe = (...fs) => (a) => g(a, ...fs);
+// 일반적인 pipe
+const pipe = (...fs) => (a) => go(a, ...fs);
+// 익명함수를 받을 수 있는 pipe
+const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
 ```
 
 ## 커링
