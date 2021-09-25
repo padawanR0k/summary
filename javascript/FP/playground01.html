@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body>
+	<script>
+		const log = console.log;
+
+		const curry = f =>
+			(a, ..._) => _.length ? f(a, ..._) : (..._) => f(a, ..._);
+
+		const isIterable = a => a && a[Symbol.iterator];
+
+		const go1 = (a, f) => a instanceof Promise ? a.then(f) : f(a);
+
+
+		const reduceF = (acc, a, f) => {
+			let res;
+			if (a instanceof Promise) {
+				res = a.then(a => f(acc, a), e => e === 'fail' ? acc : Promise.reject(e))
+			} else {
+				res = f(acc, a);
+			}
+			return res
+		}
+
+		const head = iter => go1(take(1, iter), ([h]) => h)
+		const reduce = curry((f, acc, iter) => {
+			if (!iter) {
+				iter = acc[Symbol.iterator]();
+				acc = iter.next().value;
+			} else {
+				iter = iter[Symbol.iterator]();
+			}
+			return go1(acc, function recur(acc) {
+				let cur;
+				while (!(cur = iter.next()).done) {
+					acc = reduceF(acc, cur.value, f);
+					if (acc instanceof Promise) return acc.then(recur);
+				}
+				return acc;
+			});
+		});
+
+		const go = (...args) => reduce((a, f) => f(a), args);
+
+		const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
+
+		const take = curry((l, iter) => {
+			let res = [];
+			iter = iter[Symbol.iterator]();
+			return function recur() {
+				let cur;
+				while (!(cur = iter.next()).done) {
+					const a = cur.value;
+					if (a instanceof Promise) {
+						return a.then(a => {
+							res.push(a);
+							return res.length === l ? res : recur();
+						}).catch(e => {
+							if (e === 'fail') {
+								return recur()
+							} else {
+								return Promise.reject(e)
+							}
+						})
+					}
+					res.push(a);
+					if (res.length == l) return res;
+				}
+				return res;
+			}()
+		});
+
+		const takeAll = take(Infinity);
+
+		const L = {};
+
+		L.range = function* (l) {
+			let i = -1;
+			while (++i < l) yield i;
+		};
+		L.map = curry(function* (f, iter) {
+			for (const a of iter) {
+				yield go1(a, f);
+			}
+		});
+		L.filter = curry(function* (f, iter) {
+			for (const a of iter) {
+				const b = go1(a, f);
+				if (b instanceof Promise) {
+					yield	b.then(b => b ? a : Promise.reject('fail'))
+				} else if (b) {
+					yield a;
+				}
+			}
+		});
+
+		L.entries = function* (obj) {
+			for (const k in obj) yield [k, obj[k]];
+		};
+
+		L.flatten = function* (iter) {
+			for (const a of iter) {
+				if (isIterable(a)) yield* a;
+				else yield a;
+			}
+		};
+
+		L.deepFlat = function* f(iter) {
+			for (const a of iter) {
+				if (isIterable(a)) yield* f(a);
+				else yield a;
+			}
+		};
+
+		L.flatMap = curry(pipe(L.map, L.flatten));
+
+		const map = curry(pipe(L.map, takeAll));
+
+		const filter = curry(pipe(L.filter, takeAll));
+
+		const find = curry((f, iter) => go(
+			iter,
+			L.filter(f),
+			take(1),
+			([a]) => a));
+
+		const flatten = pipe(L.flatten, takeAll);
+
+		const flatMap = curry(pipe(L.map, flatten));
+
+		var add = (a, b) => a + b;
+
+		const range = l => {
+			let i = -1;
+			let res = [];
+			while (++i < l) {
+				res.push(i);
+			}
+			return res;
+		};
+		const users = [{
+			id: 1,
+			name: 'A'
+		}, {
+			id: 2,
+			name: 'B'
+		}, {
+			id: 3,
+			name: 'C'
+		}, ];
+		const getUserById = id => find(u => u.id === id, users) || Promise.reject('없음')
+		const f = ({
+			name
+		}) => name;
+		const g = getUserById;
+		const fg = id => Promise.resolve(id).then(g).then(f)
+
+		// new Promise((resolve) => {
+		// fg(2).then(console.log)
+		// resolve()
+		// }).then(() => {
+		// users.pop()
+		// users.pop()
+		// fg(2).then(console.log)
+		// g(2).then(console.log)
+		// })
+
+
+		// go([Promise.resolve(1), Promise.resolve(2)],
+		// L.map(a => a + 10),
+		// take(2),
+		// console.log)
+
+		// go([Promise.resolve(1), Promise.resolve(2)],
+		// map(a => a + 10),
+		// console.log)
+
+
+
+		// go([1,2,3,4],
+		// L.map(a => Promise.resolve(a*a)),
+		// L.filter(a => Promise.resolve(a % 2)),
+		// take(2),
+		// reduce((a, b)=> a+b),
+		// console.log)
+		C = {}
+		const catchNoop = (arr) => {
+			arr.forEach(a => a instanceof Promise ? a.catch(() => {}) : a)
+			return arr;
+		}
+		C.reduce = curry((f, acc, iter) => {
+			const iter2 = catchNoop(iter ? [...iter] : [...acc]);
+			return iter ?
+				reduce(f, acc, iter2) :
+				reduce(f, iter2)
+		})
+
+		C.take = curry((l, iter) => take(l, catchNoop([...iter])));
+
+		const delay500 = a => new Promise(resolve => setTimeout(() => resolve(a), 500))
+
+		// console.time('');
+		// go([1,2,3,4,5],
+		// L.map(a => delay500(a * a)),
+		// L.filter(a => a % 2),
+		// reduce((a, b) => a + b),
+		// console.log)
+		// console.timeEnd('');
+
+		C.takeAll = C.take(Infinity)
+		C.map = curry(pipe(L.map, C.takeAll))
+		C.filter = curry(pipe(L.filter, C.takeAll))
+
+
+		// console.time('');
+		// go([1, 2, 3, 4, 5],
+		// L.map(a => delay500(a * a)),
+		// L.filter(a => a % 2),
+		// C.take(2),
+		// C.reduce((a, b) => a + b),
+		// console.log)
+		// console.timeEnd('');
+
+		// console.time('');
+		// go([1, 2, 3, 4, 5],
+		// C.map(a => delay500(a * a)),
+		// C.filter(a => a % 2),
+		// C.take(2),
+		// C.reduce((a, b) => a + b),
+		// console.log)
+		// console.timeEnd('');
+
+		// const fetch = require("node-fetch");
+		/**
+		 * 연습해보기
+		 */
+		const baseUrl = 'https://jsonplaceholder.typicode.com'
+		const getTodo = async (id) => {
+			return await fetch(`${baseUrl}/todos/${id}`)
+				.then(res => res.json());
+		}
+		const getComments = async (id) => {
+			return await fetch(`${baseUrl}/todos/${id}/comments`)
+				.then(res => res.json());
+		}
+
+		const getUserTodos = async (id) => {
+			return await fetch(`${baseUrl}/users/${id}/todos`)
+				.then(res => res.json());
+		}
+
+		(async () => {
+			// const arr = Array.from({length: 10}, (_,i) => i+1)
+			// console.log('=====일반=====');
+			// console.time('일반');
+			// await go(
+			// 	arr,
+			// 	L.map(getTodo), // arr길이가 100이면 100번 진행
+			// 	take(3),
+			// 	console.log
+			// )
+			// console.timeEnd('일반')
+
+			// console.log('=====병렬실행 (take 선) =====');
+			// console.time('병렬실행');
+			// await go(
+			// 	arr,
+			// 	C.take(3),
+			// 	C.map(getTodo), // arr길이에 상관없이 take번 실행
+			// 	console.log
+			// )
+			// console.timeEnd('병렬실행')
+			// console.log('4배빠름');
+
+			// console.log('=====병렬실행 (take 후) =====');
+			// console.time('병렬실행');
+			// await go(
+			// 	arr,
+			// 	C.map(getTodo), // take보다 map이 앞에 있으므로 arr만큼 모두 실행
+			// 	C.take(3), // 그러나 3개만 취함
+			// 	console.log
+			// )
+			// console.timeEnd('병렬실행')
+			// console.log('4배빠름');
+
+			// const arr = Array.from({
+			// 	length: 3
+			// }, (_, i) => i + 1)
+			// console.log('=====일반=====');
+			// console.time('일반');
+			// await go(
+			// 	arr,
+			// 	L.map(getUserTodos), // arr길이가 100이면 100번 진행
+			// 	map((item) => (console.log(item), item.id)),
+			// 	L.map(getTodo), // arr길이가 100이면 100번 진행
+			// 	L.filter(({completed}) => completed),
+			// 	L.map(({id}) => id),
+			// 	L.map(getComments), // arr길이가 100이면 100번 진행
+			// 	take(3),
+			// 	console.log
+			// )
+			// console.timeEnd('일반')
+
+			// console.log('=====병렬실행 =====');
+			// console.time('병렬실행');
+			// await go(
+			// 	arr,
+			// 	L.map(getUserTodos), // todo 여러개를 가져옴
+			// 	L.map((item) => item[0].id),
+			// 	L.map(getTodo), // todo 하나씩 가져옴
+			// 	L.filter((item) => item.id > 10), // 거름
+			// 	L.map(({id}) => id),
+			// 	L.map(getComments), // arr길이에 상관없이 take번 실행
+			// 	take(1),
+			// 	console.log
+			// )
+			// console.timeEnd('병렬실행')
+			// console.log('4배빠름');
+
+			// console.log('=====병렬실행 왜 이건 안됌? =====');
+			// console.time('병렬실행');
+			// 	await go(
+			// 	arr,
+			// 	L.map(getUserTodos), // todo 여러개를 가져옴
+			// 	// L.map(async (item) => await getTodo(item.id)), // todo 하나씩 가져옴
+			// 	// L.filter((item) => item.id % 2), // 거름
+			// 	// L.map(async (item) => await getComments(item.id)), // arr길이에 상관없이 take번 실행
+			// 	take(1),
+			// 	console.log
+			// 	)
+			// console.timeEnd('병렬실행')
+			// console.log('4배빠름');
+
+			// console.log('홀수만 가져와 더하기');
+			// const arr = Array.from({length: 10}, (_, i) => i + 1);
+			// await go(
+			// 	arr,
+			// 	L.filter(a => a%2),
+			// 	// reduce((a, b) => a + b),
+			// 	take(10),
+			// 	console.log
+			// )
+		})()
+	</script>
+</body>
+
+</html>

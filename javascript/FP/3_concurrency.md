@@ -348,3 +348,6 @@ console.timeEnd('');
 // vs
 // : 0.167ms 
 ```
+
+## 동시성 프로그래밍 - 3
+- Promise는 async await 키워드를 통해 동기적으로 사용가능. then처리가 되지않은 Promise객체는 Promise로 남아있음. 값을 사용하고 싶으면 꼭 `then()`이나 await 키워드를 사용해야함. 최상위에서 async await키워드를 사용하고 싶으면 async 즉시 실행 함수를 사용하면됨

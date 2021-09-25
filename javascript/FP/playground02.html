@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="./fx.js"></script>
+	<title>Document</title>
+</head>
+
+<body>
+	<script>
+		(async () => {
+			// 범위값 python 처럼
+			// console.log(L.range(10));
+			// console.log(...L.range(10));
+			// console.log(...L.range(1, 10, 2));
+			// console.log(...L.range(0, 10, 2));
+			// _.go(
+			// 	_.range(10),
+			// 	_.each(a => a*2),
+			// 	_.each(console.log)
+			// )
+			// console.log('--');
+			// _.go(
+			// 	L.range(10),
+			// 	L.map(console.log),
+			// 	_.takeAll
+			// )
+			// const join = (sep) => _.reduce((a,b) => `${a}${sep}${b}`)
+			// _.go(
+			// 	_.range(1, 6),
+			// 	_.map(_.range),
+			// 	_.map(_.map(a => "*")),
+			// 	_.map(join('')),
+			// 	join('\n'),
+			// 	console.log
+			// )
+			// *
+			// **
+			// ***
+			// ****
+			// *****
+
+			// const join = (sep) => _.reduce((a,b) => `${a}${sep}${b}`)
+			// _.go(
+			// 	_.range(1, 10, 2),
+			// 	_.map(_.range),
+			// 	_.map(_.map(a => "*")),
+			// 	_.map(join('')),
+			// 	_.map((a) => _.go(
+			// 		_.range(5-(a.length/2)),
+			// 		_.map(_ => ''),
+			// 		join(' ')
+			// 	) + a),
+			// 	join('\n'),
+			// 	console.log
+			// )
+			// 		 *
+			//    ***
+			//   *****
+			//  *******
+			// *********
+			// const users = [
+			// 	{name: 'a', age: 11},
+			// 	{name: 'b', age: 21},
+			// 	{name: 'c', age: 31},
+			// ];
+			// const add = (a, b) => a + b;
+			// console.log(
+			// 	_.reduce(add, L.filter(age => age > 30, L.map(a => a.age, users))),
+			// )
+
+			// const obj1 = {
+			// 	a: 1,
+			// 	b: undefined,
+			// 	c: 'CC',
+			// 	d: 'DD'
+			// }
+			// const add = (a, b) => a + b;
+			// const qs =
+			// 	_.pipe(
+			// 		Object.entries,
+			// 		_.filter(([,v])=>v),
+			// 		_.map(([k,v]) => `${k}=${v}`),
+			// 		_.reduce((acc,a) => `${acc}&${a}`)
+			// 	)
+
+			// const qs2 = (obj) =>
+			// 	_.go(
+			// 		obj,
+			// 		Object.entries,
+			// 		_.filter(([,v])=>v),
+			// 		_.map(([k,v]) => `${k}=${v}`),
+			// 		_.reduce((acc,a) => `${acc}&${a}`)
+			// 	)
+
+			// console.log(qs(obj1)); // a=1&c=CC&d=DD
+			// console.log(qs2(obj1)); // a=1&c=CC&d=DD
+
+
+			// const split = _.curry((sep, str) => str.split(sep));
+			// const queryToObject = _.pipe(
+			// 	split('&'),
+			// 	_.map(split('=')),
+			// 	_.map(([k,v])=>({[k]:v})),
+			// 	_.reduce(Object.assign)
+			// )
+
+			// console.log(queryToObject('a=1&c=CC&d=DD')); /// {a: "1" c: "CC" d: "DD"}
+
+
+			// const f = x => x + 10;
+			// const g = x => x - 5;
+			// const fg = x => f(g(x));
+			// _.go(
+			// 	10,
+			// 	fg,
+			// 	console.log
+			// )
+
+			// _.go(
+			// 	[10, null],
+			// 	L.map(fg),
+			// 	_.each(console.log)
+			// )
+
+
+			// const users = [
+			// 	{name: 'a', age: 11},
+			// 	{name: 'b', age: 21},
+			// 	{name: 'c', age: 31},
+			// ];
+
+			// _.find는 못찾으면 undefined리턴
+
+			// const getUser1 = (name) => {
+			// 	return _.find(u => u.name === name, users);
+			// }
+
+			// const getUser2 = (name) => {
+			// 	return _.go(users,
+			// 		L.filter(a => a.name === name),
+			// 		L.take(1),
+			// 		L.map(a => a.age),
+			// 		_.each(console.log))
+			// }
+
+			// var user = getUser1('z');
+			// console.log(user);
+			// if (user) {
+			// 	console.log(user.age)
+			// }
+
+			// 함수형으로 작성된 경우, 진행하려는 행위를 함수합성내부에 넣게된다.
+			// 앞서 작성한 부분들에 대해서 만족하지 못해 필터로 값이 걸려진 경우에는 그 뒤에있는 "행위"가 실행되지 않는다.
+			// 그러므로 if같은 부분이 추가적으로 필요하지 않게된다.
+
+			// getUser2('z')
+
+
+			// const obj = {
+			// 	a: 1,
+			// 	b: 2,
+			// 	c: 3,
+			// }
+
+			// _.go(
+			// 	obj,
+			// 	L.entries,
+			// 	L.filter(([k,v]) => v%2),
+			// 	L.map(([k,v]) => ({[v]: k})),
+			// 	_.reduce(Object.assign),
+			// 	console.log
+			// ) // {1: "a", 3: "c"}
+
+
+			// const it = (function *() {
+			// 	yield 10;
+			// 	yield 20;
+			// 	yield 30;
+			// }())
+			// console.log(...it);
+
+
+			// const object = entries =>
+			// 	_.reduce((obj, [k,v]) => (obj[k]=v, obj), {}, entries);
+			// console.log(object(L.entries({b:2, c:3})));
+
+			// let m = new Map();
+			// m.set('a', 1);
+			// m.set('b', 2);
+			// m.set('c', 3);
+			// console.log(object(m));
+
+			// const object = entries =>
+			// _.reduce((obj, [k,v]) => (obj[k]=v, obj), {}, entries);
+			// const mapObject = (f, obj) =>
+			// 	_.go(
+			// 		obj,
+			// 		L.entries,
+			// 		_.map(([k, v]) => [k, f(v)]),
+			// 		object,
+			// 	);
+			// console.log(mapObject(a => a + 30, {a: 1, b: 2, c: 3}));
+
+
+			// const obj = {a: 1, b: 2, c: 3};
+			// const pick = (keys, obj) => _.go(
+			// 	obj,
+			// 	_.entries,
+			// 	_.filter(([k]) => keys.includes(k)),
+			// 	_.object
+			// )
+			// console.log(pick(['a'], obj));
+
+			// const users = [
+			// 	{id: 1, name: 'a', age: 11},
+			// 	{id: 2, name: 'b', age: 21},
+			// 	{id: 3, name: 'c', age: 31},
+			// 	{id: 4, name: 'd', age: 41},
+			// ];
+			// const indexBy = (f, iter) =>
+			// 	_.go(
+			// 		_.reduce((obj, a) => (obj[f(a)] = a, obj), {}, iter)
+			// 	)
+
+			// console.log(_.indexBy(u => u.id, users))
+			// console.log(indexBy(u => u.id, users))
+
+
+
+			const users = [
+				{id: 1, name: 'a', age: 11},
+				{id: 2, name: 'b', age: 21},
+				{id: 3, name: 'c', age: 31},
+				{id: 4, name: 'd', age: 41},
+			];
+			const indexByFilter = (f, iter) =>
+				_.go(
+					iter,
+					L.entries,
+					_.filter(([k,v]) => f(v)),
+					_.object,
+					// console.log
+				)
+			const indexed = _.indexBy(u => u.id, users);
+			console.log(indexed);
+			console.log(indexByFilter(a => a.age > 20, indexed))
+		})()
+	</script>
+</body>
+
+</html>
