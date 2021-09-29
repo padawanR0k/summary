@@ -259,3 +259,153 @@ const indexed = _.indexBy(u => u.id, users);
 console.log(indexByFilter(a => a.age > 20, indexed))
 ```
 인덱스된 객체를 필터링하기
+
+#### Model, Collection 클래스 만들어보기
+- 함수형 프로그래밍 기법은 객체지향 프로그래밍을 대체하는 것이 아닌 코드내부의 조건, 분기문을 대체하기 위해 사용하는 것
+- `HTMLDocument`는 이터러블 프로토콜을 지원함
+
+```javascript
+class Model {
+	constructor(attrs = {}) {
+		this._attrs = attrs;
+	}
+
+	get(k) {
+		return this._attrs[key];
+	}
+
+	set(k, v) {
+		this._attrs[k] = v;
+		return this;
+	}
+}
+class Collection {
+	constructor(models = []) {
+		this._models = models;
+	}
+
+	at(idx) {
+		return this._models[idx];
+	}
+
+	add(model) {
+		this._models.push(model);
+		return this;
+	}
+}
+
+
+const coll = new Collection();
+coll.add(new Model({id: 3, name: 'AA'}))
+coll.add(new Model({id: 2, name: 'BB'}))
+
+// 값자체로 순회 불가
+// _.go(
+// 	L.range(2),
+// 	L.map(i => coll.at(i)),
+// 	_.each(console.log)
+//
+
+class Collection {
+	...
+
+	[Symbol.iterator]() {
+		return this._models[Symbol.iterator]()
+	}
+}
+const coll = new Collection();
+coll.add(new Model({id: 3, name: 'AA'}))
+coll.add(new Model({id: 2, name: 'BB'}))
+console.log(...coll);
+
+```
+- 배열의 이터레이터를 [Symbol.iterator]() 메소드로 반환하게끔하여서 이터러블 프로토콜을 만족하게됨
+- 이로서 인스턴스의 데이터를 순회할 수 있게 되었다. 그러나 인스턴스 자체의 프로퍼티 일부일 뿐임
+- 이 클래스들을 데이터를 다루는 클래스에서 확장하게되면 확장한 클랙스에서도 `this`참조를 통해 데이터를 순회할 수 있다.
+
+### _.takeWhile, _.takeUntil
+- `_.takeWhile`
+	- `truthy`한 값이 오면 계속 진행
+- `_.takeUntil`
+	- `truthy`한 값이 오면 중단
+```javascript
+_.go(
+	[1,2,3,4,5, 0, 0],
+	_.takeWhile(a => a),
+	_.each(console.log) // 1,2,3,4,5
+)
+_.go(
+	[1,2,3,4,5, 0, 0],
+	_.takeUntil(a => a),
+	_.each(console.log) // 1
+)
+```
+
+### 실무에 적용하기
+```javascript
+const Impt = {
+	payments: {
+		1: [
+			{ imp_id: 11, order_id: 1, amount: 15000},
+			{ imp_id: 21, order_id: 2, amount: 25000},
+			{ imp_id: 31, order_id: 3, amount: 35000},
+		],
+		2: [
+			{ imp_id: 41, order_id: 1, amount: 150},
+			{ imp_id: 51, order_id: 2, amount: 250},
+			{ imp_id: 61, order_id: 3, amount: 350},
+		],
+		3: []
+	},
+	getPayments: page => {
+		console.log('요청중...');
+		return _.delay(100, Impt.payments[page])
+	}
+}
+
+const DB = {
+	getOrders: ids =>
+		_.delay(100, [
+			{id: 1},
+			{id: 3},
+			{id: 7},
+		])
+}
+
+async function job() {
+	// 결제된 결제모듈 데이터
+	const payments = await _.go(
+		L.range(1, 3),
+		L.takeUntil(({length}) => length > 0), // 3개이하전까지 진행
+		L.map(Impt.getPayments),
+		_.flat)
+
+	console.log(payments);
+
+	const orderIds = await _.go(
+		payments,
+		_.map(p => p.order_id),
+		DB.getOrders,
+		_.map(({id})=> (console.log(id), id)))
+	console.log(orderIds)
+
+	// 결제완료 orderIds에 없는 미결제 정보들
+	_.go(
+		payments,
+		_.reject(p => orderIds.includes(p.order_id)),
+		console.log
+	)
+}
+job();
+
+// 스케쥴러
+(function recur() {
+	Promise.all(
+		// job이 4000안에 끝났으면 4000까지 기다리고
+		_.delay(4000, undefined),
+		// 다음 job을 실행한다.
+		job()
+	).then(recur)
+}());
+```
+- 데이터의 흐름을 보면 if나 for문이 없다. 라이브러리의 작동원리만 이해한다면 if나 for문이 있는 코드들보다 훨씬 짧고 가독성이 좋다.

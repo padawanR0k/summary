@@ -231,23 +231,151 @@
 
 
 
-			const users = [
-				{id: 1, name: 'a', age: 11},
-				{id: 2, name: 'b', age: 21},
-				{id: 3, name: 'c', age: 31},
-				{id: 4, name: 'd', age: 41},
-			];
-			const indexByFilter = (f, iter) =>
-				_.go(
-					iter,
-					L.entries,
-					_.filter(([k,v]) => f(v)),
-					_.object,
-					// console.log
+			// const users = [
+			// 	{id: 1, name: 'a', age: 11},
+			// 	{id: 2, name: 'b', age: 21},
+			// 	{id: 3, name: 'c', age: 31},
+			// 	{id: 4, name: 'd', age: 41},
+			// ];
+			// const indexByFilter = (f, iter) =>
+			// 	_.go(
+			// 		iter,
+			// 		L.entries,
+			// 		_.filter(([k,v]) => f(v)),
+			// 		_.object,
+			// 		// console.log
+			// 	)
+			// const indexed = _.indexBy(u => u.id, users);
+			// console.log(indexed);
+			// console.log(indexByFilter(a => a.age > 20, indexed))
+
+			// class Model {
+			// 	constructor(attrs = {}) {
+			// 		this._attrs = attrs;
+			// 	}
+
+			// 	get(k) {
+			// 		return this._attrs[key];
+			// 	}
+
+			// 	set(k, v) {
+			// 		this._attrs[k] = v;
+			// 		return this;
+			// 	}
+			// }
+			// class Collection {
+			// 	constructor(models = []) {
+			// 		this._models = models;
+			// 	}
+
+			// 	at(idx) {
+			// 		return this._models[idx];
+			// 	}
+
+			// 	add(model) {
+			// 		this._models.push(model);
+			// 		return this;
+			// 	}
+
+			// 	[Symbol.iterator]() {
+			// 		return this._models[Symbol.iterator]()
+			// 	}
+			// }
+
+
+			// const coll = new Collection();
+			// coll.add(new Model({id: 3, name: 'AA'}))
+			// coll.add(new Model({id: 2, name: 'BB'}))
+
+			// 값자체로 순회 불가
+			// _.go(
+			// 	L.range(2),
+			// 	L.map(i => coll.at(i)),
+			// 	_.each(console.log)
+			// )
+			// console.log(...coll);
+
+
+			// _.go(
+			// 	[1,2,3,4,5, 0, 0],
+			// 	_.takeWhile(a => a),
+			// 	_.each(console.log)
+			// )
+			// _.go(
+			// 	[1,2,3,4,5, 0, 0],
+			// 	_.takeUntil(a => a),
+			// 	_.each(console.log)
+			// )
+
+
+			const Impt = {
+				payments: {
+					1: [
+						{ imp_id: 11, order_id: 1, amount: 15000},
+						{ imp_id: 21, order_id: 2, amount: 25000},
+						{ imp_id: 31, order_id: 3, amount: 35000},
+					],
+					2: [
+						{ imp_id: 41, order_id: 1, amount: 150},
+						{ imp_id: 51, order_id: 2, amount: 250},
+						{ imp_id: 61, order_id: 3, amount: 350},
+					],
+					3: []
+				},
+				getPayments: page => {
+					console.log('요청중...');
+					return _.delay(100, Impt.payments[page])
+				}
+			}
+
+			const DB = {
+				getOrders: ids =>
+					_.delay(100, [
+						{id: 1},
+						{id: 3},
+						{id: 7},
+					])
+			}
+
+			async function job() {
+				// 결제된 결제모듈 데이터
+				const payments = await _.go(
+					L.range(1, 3),
+					L.takeUntil(({length}) => length > 0), // 3개이하전까지 진행
+					L.map(Impt.getPayments),
+					_.flat,
+					// L.map(console.log),
+					// _.take(3)
 				)
-			const indexed = _.indexBy(u => u.id, users);
-			console.log(indexed);
-			console.log(indexByFilter(a => a.age > 20, indexed))
+
+				console.log(payments);
+
+				const orderIds = await _.go(
+					payments,
+					_.map(p => p.order_id),
+					DB.getOrders,
+					_.map(({id})=> (console.log(id), id)),
+					)
+				console.log(orderIds)
+
+				// 결제완료 orderIds에 없는 미결제 정보들
+				_.go(
+					payments,
+					_.reject(p => orderIds.includes(p.order_id)),
+					console.log
+				)
+			}
+			job();
+
+			// 스케쥴러
+			(function recur() {
+				Promise.all(
+					// job이 4000안에 끝났으면 4000까지 기다리고
+					_.delay(4000, undefined),
+					// 다음 job을 실행한다.
+					job()
+				).then(recur)
+			}());
 		})()
 	</script>
 </body>
